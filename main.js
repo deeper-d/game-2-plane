@@ -39,6 +39,12 @@ var __mian = function () {
         'bullet': 'img/bullet.png',
         'plane': 'img/plane.png',
         'cloud1': 'img/cloud1.png',
+        'cloud2': 'img/cloud2.png',
+        'cloud3': 'img/cloud3.png',
+        'cloud4': 'img/cloud4.png',
+        'cloud5': 'img/cloud5.png',
+        'enemy0': 'img/enemy0.png',
+        'enemy1': 'img/enemy1.png',
     }
 
     var game = Guagame.instance(20, images, (g) => {
