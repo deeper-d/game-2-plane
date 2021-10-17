@@ -45,10 +45,12 @@ var __mian = function () {
         'cloud5': 'img/cloud5.png',
         'enemy0': 'img/enemy0.png',
         'enemy1': 'img/enemy1.png',
+        'fire': 'img/particle.png',
     }
 
     var game = Guagame.instance(20, images, (g) => {
         var scene = Scene.new(g)
+        // var scene = SceneTitle.new(g)
         g.runWithScene(scene)
     })
 

@@ -3,20 +3,6 @@ const randomBetween = (start, end) => {
     return Math.floor(n + start)
 }
 
-class Bullet extends GuaImage {
-    constructor(game) {
-        super(game, 'bullet')
-        this.setup()
-    }
-
-    setup() {
-        this.speed = 10
-    }
-
-    update() {
-        this.y -= this.speed
-    }
-}
 class Cloud extends GuaImage {
     constructor(game) {
         var type = randomBetween(1, 5)
@@ -37,7 +23,40 @@ class Cloud extends GuaImage {
             this.setup()
         }
     }
+
 }
+
+class Bullet extends GuaImage {
+    constructor(game) {
+        super(game, 'bullet')
+        this.setup()
+    }
+
+    setup() {
+        this.speed = 20
+    }
+
+    update() {
+        this.y -= this.speed
+
+        this.hitEnemy()
+
+    }
+
+    hitEnemy() {
+        let enemies = this.scene.enemies
+        for (let e of enemies) {
+            if (this.y === e.y) {
+                console.log('击中敌人 hit: ', e)
+                // add particles
+                var ps = GuaParticleSystem.new(this.game)
+                this.scene.addElement(ps)
+                e.life--
+            }
+        }
+    }
+}
+
 class Enemy extends GuaImage {
     constructor(game) {
         var type = randomBetween(0, 1)
@@ -48,6 +67,7 @@ class Enemy extends GuaImage {
     }
 
     setup() {
+        this.life = 1
         this.speed = randomBetween(2, 5)
         this.x = randomBetween(0, 300)
         this.y = -randomBetween(0, 200)
@@ -82,7 +102,7 @@ class Player extends GuaImage {
 
     fire() {
         if (this.cooldown === 0) {
-            this.cooldown = 9
+            this.cooldown = 5
             var x = this.x + 15
             var y = this.y
             var b = Bullet.new(this.game)
@@ -133,6 +153,9 @@ class Scene extends GuaScene {
         //
         this.addClouds()
         this.addEnemies()
+        // // add particles
+        // var ps = GuaParticleSystem.new(this.game)
+        // this.addElement(ps)
 
     }
 
@@ -179,6 +202,9 @@ class Scene extends GuaScene {
     update() {
         // this.cloud.y += 1
         // super.update()
+
+         // 删除死掉的敌人
+         this.enemies = this.enemies.filter(e => e.life > 0)
     }
 
 }

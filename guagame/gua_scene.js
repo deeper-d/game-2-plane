@@ -16,7 +16,8 @@ class GuaScene {
 
     draw() {
         for (let ele of this.elements) {
-            this.game.drawImage(ele)
+            // this.game.drawImage(ele)
+            ele.draw()
             ele.update()
         }
 
@@ -24,7 +25,8 @@ class GuaScene {
 
     update() {
         for (let ele of this.elements) {
-            this.game.drawImage(ele)
+            // this.game.drawImage(ele)
+            ele.draw()
             ele.update()
         }
     }
