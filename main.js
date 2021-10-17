@@ -46,11 +46,38 @@ var __mian = function () {
         'enemy0': 'img/enemy0.png',
         'enemy1': 'img/enemy1.png',
         'fire': 'img/particle.png',
+        // 走路
+        // 'w1': 'img/walking/w1.png',
+        // 'w2': 'img/walking/w2.png',
+        // 'w3': 'img/walking/w3.png',
+        // 'w4': 'img/walking/w4.png',
+        // 'w5': 'img/walking/w5.png',
+        // 'w6': 'img/walking/w6.png',
+        // 'w7': 'img/walking/w7.png',
+        // 'w8': 'img/walking/w8.png',
+        // 'w9': 'img/walking/w9.png',
+        // 多状态动画
+        // 闲置
+        idle1: 'img/idle/i1.png',
+        idle2: 'img/idle/i2.png',
+        idle3: 'img/idle/i3.png',
+        idle4: 'img/idle/i4.png',
+        // 跑动
+        run1: 'img/run/r1.png',
+        run2: 'img/run/r2.png',
+        run3: 'img/run/r3.png',
+        run4: 'img/run/r4.png',
+        run5: 'img/run/r5.png',
+        run6: 'img/run/r6.png',
+        run7: 'img/run/r7.png',
+        run8: 'img/run/r8.png',
+        run9: 'img/run/r9.png',
+        run10: 'img/run/r10.png',
     }
 
     var game = Guagame.instance(20, images, (g) => {
-        var scene = Scene.new(g)
-        // var scene = SceneTitle.new(g)
+        // var scene = Scene.new(g)
+        var scene = SceneTitle.new(g)
         g.runWithScene(scene)
     })
 
