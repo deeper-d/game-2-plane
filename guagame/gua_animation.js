@@ -70,6 +70,7 @@ class GuaAnimation {
             this.x += x
         }
         let keydowns = this.game.keydowns
+        // todo:不知道为啥这里有个bug, 只判断一个是不起作用的，要两个都判断
         if (keydowns['a'] === 'down' || keydowns['d'] === 'down') {
             this.flipX = keydowns['a'] === 'down'
             this.changeAnimation('run')
