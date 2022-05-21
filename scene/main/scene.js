@@ -83,7 +83,7 @@ class Enemy extends GuaImage {
         //
         this.life = 1
         this.killed = false
-        this.speed = randomBetween(2, 4)
+        this.speed = type ? randomBetween(4, 6) : randomBetween(2, 4)
         this.x = randomBetween(0, 300)
         this.y = -randomBetween(0, 200)
     }

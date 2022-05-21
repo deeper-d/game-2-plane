@@ -39,7 +39,7 @@ class GuaParticleSystem {
     }
 
     setup() {
-        this.duration = 20
+        this.duration = 10
         if (this.pos) {
             this.x = this.pos.x
             this.y = this.pos.y

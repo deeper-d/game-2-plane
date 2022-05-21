@@ -78,6 +78,7 @@ var __mian = function () {
     }
 
     var game = Guagame.instance(20, images, (g) => {
+        // var scene = new AnimationTitle(g)
         var scene = SceneTitle.new(g)
         // var scene = Scene.new(g)
         g.runWithScene(scene)

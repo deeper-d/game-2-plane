@@ -1,4 +1,4 @@
-class SceneTitle extends GuaScene {
+class AnimationTitle extends GuaScene {
     constructor(game) {
         super(game)
         this.game = game
