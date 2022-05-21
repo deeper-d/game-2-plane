@@ -3,6 +3,16 @@ const randomBetween = (start, end) => {
     return Math.floor(n + start)
 }
 
+// 单例（全局变量）
+const config = {
+    player_speed: 10,
+    cloud_speed: 1,
+    enemy_speed: 5,
+    bullet_speed: 5,
+    cooldown: 5,
+}
+
+
 class Cloud extends GuaImage {
     constructor(game) {
         var type = randomBetween(1, 5)
@@ -12,12 +22,12 @@ class Cloud extends GuaImage {
     }
 
     setup() {
-        this.speed = 1
         this.x = randomBetween(-100, 200)
         this.y = -randomBetween(0, 200)
     }
 
     update() {
+        this.speed = config.cloud_speed
         this.y += this.speed
         if (this.y > 600) {
             this.setup()
@@ -26,6 +36,7 @@ class Cloud extends GuaImage {
 
 }
 
+// 3 Bullet
 class Bullet extends GuaImage {
     constructor(game) {
         super(game, 'bullet')
@@ -33,42 +44,45 @@ class Bullet extends GuaImage {
     }
 
     setup() {
-        this.speed = 20
     }
 
     update() {
+        // 动态调整速度
+        this.speed = config.bullet_speed
         this.y -= this.speed
 
-        this.hitEnemy()
+        // this.hitEnemy()
 
     }
 
     hitEnemy() {
         let enemies = this.scene.enemies
-        for (let e of enemies) {
-            if (this.y === e.y) {
-                console.log('击中敌人 hit: ', e)
-                // add particles
-                var ps = GuaParticleSystem.new(this.game)
-                this.scene.addElement(ps)
-                e.life--
-            }
-        }
+        console.log('enemies', enemies)
+        // for (let e of enemies) {
+        //     if (this.y === e.y) {
+        //         console.log('击中敌人 hit: ', e)
+        //         // add particles
+        //         // var ps = GuaParticleSystem.new(this.game)
+        //         // this.scene.addElement(ps)
+        //         // e.life--
+        //     }
+        // }
     }
 }
 
+// 2 Enemy
 class Enemy extends GuaImage {
     constructor(game) {
         var type = randomBetween(0, 1)
         var name = 'enemy' + type
-        console.log('name', name)
         super(game, name)
-        this.setup()
+        this.setup(type)
+
     }
 
-    setup() {
+    setup(type) {
         this.life = 1
-        this.speed = randomBetween(2, 5)
+        this.speed = randomBetween(2, 4)
         this.x = randomBetween(0, 300)
         this.y = -randomBetween(0, 200)
     }
@@ -81,7 +95,7 @@ class Enemy extends GuaImage {
     }
 }
 
-
+// 1 Player
 class Player extends GuaImage {
     constructor(game) {
         super(game, 'plane')
@@ -94,20 +108,21 @@ class Player extends GuaImage {
     }
 
     update() {
-        if (this.cooldown) {
+        // 子弹冷却时间
+        if (this.cooldown > 0) {
             this.cooldown--
         }
-       
+        // 动态调整速度
+        this.speed = config.player_speed
+
     }
 
     fire() {
         if (this.cooldown === 0) {
-            this.cooldown = 5
-            var x = this.x + 15
-            var y = this.y
+            this.cooldown = config.cooldown
             var b = Bullet.new(this.game)
-            b.x = x
-            b.y = y
+            b.x = this.x + 15
+            b.y = this.y
             this.scene.addElement(b)
         }
     }
@@ -130,29 +145,30 @@ class Player extends GuaImage {
 class Scene extends GuaScene {
     constructor(game) {
         super(game)
+        // 初始化 主场景
         this.setup()
+        // 初始化操作事件
         this.setupInputs()
-
     }
 
     setup() {
         var game = this.game
         this.bg = GuaImage.new(game, 'sky')
-        // this.cloud = GuaImage.new(game, 'cloud1')
-        // this.player = GuaImage.new(g, 'plane') 
         this.player = Player.new(game)
         this.player.x = 200
         this.player.y = 500
-        //
-        this.numOfEnemies = 10
+        this.numOfEnemies = 5
 
-        // 在父类 GuaImage 里统一 draw 
+        // 把元素添加进主场景，在主场景里自动draw所有，
+        // 在 GuaGame 里统一 draw ,调用 scene.draw()
         this.elements = []
         this.addElement(this.bg)
         this.addElement(this.player)
-        //
+        // 添加云
         this.addClouds()
+        // 添加敌人
         this.addEnemies()
+
         // // add particles
         // var ps = GuaParticleSystem.new(this.game)
         // this.addElement(ps)
@@ -161,7 +177,7 @@ class Scene extends GuaScene {
 
     addClouds() {
         var es = []
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < 2; i++) {
             var e = Cloud.new(this.game)
             es.push(e)
             this.addElement(e)
@@ -200,11 +216,10 @@ class Scene extends GuaScene {
     }
 
     update() {
-        // this.cloud.y += 1
-        // super.update()
+        super.update()
 
          // 删除死掉的敌人
-         this.enemies = this.enemies.filter(e => e.life > 0)
+        //  this.enemies = this.enemies.filter(e => e.life > 0)
     }
 
 }

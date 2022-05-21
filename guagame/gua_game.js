@@ -59,7 +59,7 @@ class Guagame {
 
     runWithScene(scene) {
         let self = this
-        self.scene = scene
+        this.scene = scene
         setTimeout(function () {
             self.runloop()
     
@@ -68,7 +68,6 @@ class Guagame {
 
     runloop() {
         var g = this
-        // console.log('监听动画')
 
         // events
         var actions = Object.keys(g.actions)
@@ -77,10 +76,8 @@ class Guagame {
             var status = g.keydowns[k]
             if (status === 'down') {
                 // 如果按键被按下，调用注册的 action
-                g.actions[k]('down')
-                
+                g.actions[k]()
             } else {
-                g.actions[k]('up')
                 // 删掉这个key的状态
                 g.keydowns[k] = null
             }

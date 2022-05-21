@@ -76,8 +76,9 @@ var __mian = function () {
     }
 
     var game = Guagame.instance(20, images, (g) => {
-        // var scene = Scene.new(g)
-        var scene = SceneTitle.new(g)
+        console.log('runcallback')
+        var scene = Scene.new(g)
+        // var scene = SceneTitle.new(g)
         g.runWithScene(scene)
     })
 

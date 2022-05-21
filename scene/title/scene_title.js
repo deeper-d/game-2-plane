@@ -23,11 +23,9 @@ class SceneTitle extends GuaScene {
         // })
 
         game.registerAction('a', function (keyStatus) {
-            console.log('click a =======', keyStatus)
             self.w.move(-3, keyStatus, 'a')
         })
         game.registerAction('d', function (keyStatus) {
-            console.log('click d =======', keyStatus)
             self.w.move(3, keyStatus, 'd')
         })
     }

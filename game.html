@@ -13,9 +13,77 @@
     <div>
         <canvas id="id-canvas" width="400" height="600"></canvas>
         <br/>
-        <!-- <input id='id-input-speed' type="range" > -->
+        
+        <div>
+            <label>
+                <input 
+                    class='gua-auto-slider' 
+                    type="range"
+                    data-value='config.player_speed'
+                >
+                玩家速度：<span class='gua-label'></span>
+            </label>
+        </div>
+
+        <div>
+            <label>
+                <input 
+                    class='gua-auto-slider' 
+                    type="range"
+                    data-value='config.bullet_speed'
+                >
+                子弹速度：<span class='gua-label'></span>
+            </label>
+        </div>
+        <div>
+            <label>
+                <input 
+                    class='gua-auto-slider' 
+                    type="range"
+                    data-value='config.bullet_speed'
+                >
+                子弹冷却时间：<span class='gua-label'></span>
+            </label>
+        </div>
+        <div>
+            <label>
+                <input 
+                    max=10
+                    min=-10
+                    class='gua-auto-slider' 
+                    type="range"
+                    data-value='config.cloud_speed'
+                >
+                云层速度：<span class='gua-label'></span>
+            </label>
+        </div> 
+
+        
 
     </div>
+    <script>
+       var es =  sel => document.querySelectorAll(sel)
+
+       var bindAll = (sel, eventName, callback) => {
+           var l = es(sel)
+           for (let input of l) {
+               input.addEventListener(eventName, () => {
+                   callback(event)
+               })
+           }
+       }
+
+       bindAll('.gua-auto-slider', 'input', () => {
+           var target = event.target
+           var bindVar = target.dataset.value
+           var v = target.value
+           eval(bindVar + '=' + v)
+           //
+           var label = target.closest('label').querySelector('.gua-label')
+           label.innerText = v
+       })
+    </script>
+
     <script src="guagame/utils.js"></script>
     <script src="guagame/gua_game.js"></script>
     <script src="guagame/gua_scene.js"></script>
@@ -45,20 +113,21 @@
         4.scene.js 抽离 elements， 在父类 GuaScene 里自动draw元素 36:20 
             ** 目的是为了自动化
         5.进一步优化，把抽离 elements 到父类 GuaScene 里 40:33
-        ** 写高等语言、用什么比人不知道的技巧，其实没意义
-           重要的是是怎么写
+            ** 写高等语言、用什么比人不知道的技巧，其实没意义
+            重要的是是怎么写
 
         第二集
         1. 抽离 Player 类
-        2. 创建 Enemy 类  09：40
-           一味的追求代码酷炫是小学生行为，你的代码不是一个人看，整个团队还得看
-        3. 发子弹 25：11
-        4. 子弹 cooldown 30:49
-        5. 动态调整各种速速 32:16
+        2. 抽离 Enemy 类  09：40
+            ** 一味的追求代码酷炫是小学生行为，你的代码不是一个人看，整个团队还得看
+        3. 抽离 Bullet 类 
+            发子弹 25：11
+            子弹 cooldown 30:49
+        4. 动态调整各种速速 config 单例（全局变量） 32:16
 
         第三集
         1. 爆炸效果 粒子系统 03：20
-        ** 工作中也应该复制粘贴，有意义的部分自己写，没意义的部分复制粘贴
+            ** 工作中也应该复制粘贴，有意义的部分自己写，没意义的部分复制粘贴
         ?? 遗留一个问题：怎么做到子弹打到分机，产生爆炸并且分机和子弹消失？？
         
 
