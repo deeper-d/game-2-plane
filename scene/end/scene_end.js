@@ -7,8 +7,12 @@ class SceneEnd extends GuaScene {
             game.replaceScene(s)
         })
     }
+
+    static new(game) {
+        return new this(game)
+    }
     
     draw() {
-        this.game.context.fillText('game over! 按 r 返回标题界面', 100, 180)
+        this.game.context.fillText(' Game Over, 按 r 重回标题页', 100, 180)
     }
 }

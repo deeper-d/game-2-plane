@@ -35,6 +35,7 @@ var __mian = function () {
     }
 
     var images = {
+        // 飞机相关：
         'sky': 'img/sky.jpg',
         'bullet': 'img/bullet.png',
         'plane': 'img/plane.png',
@@ -46,6 +47,7 @@ var __mian = function () {
         'enemy0': 'img/enemy0.png',
         'enemy1': 'img/enemy1.png',
         'fire': 'img/particle.png',
+        // 动画相关：
         // 走路
         // 'w1': 'img/walking/w1.png',
         // 'w2': 'img/walking/w2.png',
@@ -76,9 +78,8 @@ var __mian = function () {
     }
 
     var game = Guagame.instance(20, images, (g) => {
-        console.log('runcallback')
-        var scene = Scene.new(g)
-        // var scene = SceneTitle.new(g)
+        var scene = SceneTitle.new(g)
+        // var scene = Scene.new(g)
         g.runWithScene(scene)
     })
 

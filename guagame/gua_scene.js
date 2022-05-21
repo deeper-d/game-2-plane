@@ -15,13 +15,15 @@ class GuaScene {
     }
 
     draw() {
-        for (let ele of this.elements) {
-            this.game.drawImage(ele)
+        for (let e of this.elements) {
+            e.draw()
         }
 
     }
 
     update() {
+        // 清除被杀掉的元素
+        this.elements = this.elements.filter(each => !each.killed)
         for (let ele of this.elements) {
             ele.update()
         }

@@ -1,15 +1,11 @@
-const randomBetween = (start, end) => {
-    var n  = Math.random() * (end - start + 1)
-    return Math.floor(n + start)
-}
 
 // 单例（全局变量）
 const config = {
     player_speed: 10,
     cloud_speed: 1,
     enemy_speed: 5,
-    bullet_speed: 5,
-    cooldown: 5,
+    bullet_speed: 10,
+    cooldown: 2,
 }
 
 
@@ -38,8 +34,9 @@ class Cloud extends GuaImage {
 
 // 3 Bullet
 class Bullet extends GuaImage {
-    constructor(game) {
+    constructor(game, type) {
         super(game, 'bullet')
+        this.type = type
         this.setup()
     }
 
@@ -49,24 +46,23 @@ class Bullet extends GuaImage {
     update() {
         // 动态调整速度
         this.speed = config.bullet_speed
-        this.y -= this.speed
-
-        // this.hitEnemy()
-
+        this.type === 'enemy' ? this.y += this.speed : this.y -= this.speed
     }
 
     hitEnemy() {
         let enemies = this.scene.enemies
-        console.log('enemies', enemies)
-        // for (let e of enemies) {
-        //     if (this.y === e.y) {
-        //         console.log('击中敌人 hit: ', e)
-        //         // add particles
-        //         // var ps = GuaParticleSystem.new(this.game)
-        //         // this.scene.addElement(ps)
-        //         // e.life--
-        //     }
-        // }
+        for (let e of enemies) {
+            if (rectIntersects(this, e) || rectIntersects(e, this)) {
+                // 击中敌人
+                e.killed = true
+                // 爆炸 add particles
+                var ps = GuaParticleSystem.new(this.game, {
+                    x: e.x + e.w,
+                    y: e.y
+                })
+                this.scene.addElement(ps)
+            }
+        }
     }
 }
 
@@ -76,21 +72,67 @@ class Enemy extends GuaImage {
         var type = randomBetween(0, 1)
         var name = 'enemy' + type
         super(game, name)
+        this.type = type
         this.setup(type)
-
     }
 
     setup(type) {
+        this.bullets = []
+        this.numOfBullets = 10
+        this.cooldown = 100
+        //
         this.life = 1
+        this.killed = false
         this.speed = randomBetween(2, 4)
         this.x = randomBetween(0, 300)
         this.y = -randomBetween(0, 200)
     }
 
+    fire(x, y) {
+        if (this.cooldown > 96 && this.cooldown < 100) {
+            var b = Bullet.new(this.game, 'enemy')
+            b.x = x
+            b.y = y
+            this.scene.addElement(b)
+            this.bullets.push(b)
+        }
+    }
+
     update() {
+        this.cooldown--
+        if (this.cooldown === 0) {
+            this.cooldown = 100
+        }
         this.y += this.speed
         if (this.y > 600) {
             this.setup()
+        }
+        // 敌机开火
+        if (this.type === 0) {
+            this.fire(this.x, this.y)
+            this.fire(this.x + this.texture.width, this.y)
+        }
+        // 击中玩家
+        this.ifHitPlayer()
+    }
+
+    // 击中玩家
+    ifHitPlayer() {
+        let player = this.scene.player
+        let bullets = this.bullets
+        for (let b of bullets) {
+            if (rectIntersects(b, player) || rectIntersects(player, b)) {
+                // 爆炸 add particles
+                var ps = GuaParticleSystem.new(this.game, {
+                    x: player.x,
+                    y: player.y
+                })
+                this.scene.addElement(ps)
+                 // 游戏结束
+                 setTimeout(() => {
+                    this.scene.gameOver()
+                }, 300)
+            }
         }
     }
 }
@@ -103,6 +145,7 @@ class Player extends GuaImage {
     }
 
     setup() {
+        this.bullets = []
         this.speed = 10
         this.cooldown = 0
     }
@@ -114,7 +157,10 @@ class Player extends GuaImage {
         }
         // 动态调整速度
         this.speed = config.player_speed
-
+        // 击中敌人
+        this.ifHitEnemy()
+        // 和敌人相撞
+        this.ifCollideWithEnemy()
     }
 
     fire() {
@@ -124,8 +170,52 @@ class Player extends GuaImage {
             b.x = this.x + 15
             b.y = this.y
             this.scene.addElement(b)
+            this.bullets.push(b)
         }
     }
+
+    // 击中敌人
+    ifHitEnemy() {
+        let enemies = this.scene.enemies
+        let bullets = this.bullets
+        for (let b of bullets) {
+            for (let e of enemies) {
+                if (rectIntersects(b, e) || rectIntersects(e, b)) {
+                    // 击中敌人
+                    e.killed = true
+                    // 爆炸 add particles
+                    var ps = GuaParticleSystem.new(this.game, {
+                        x: e.x + e.w,
+                        y: e.y
+                    })
+                    this.scene.addElement(ps)
+                }
+            }
+        }
+        
+    }
+
+    // 判断敌机和玩家相撞
+    ifCollideWithEnemy() {
+        let player = this
+        let enemies = this.scene.enemies
+        for (let e of enemies) {
+            if (rectIntersects(e, player) || rectIntersects(player, e)) {
+                // 爆炸
+                var ps = GuaParticleSystem.new(this.game, {
+                    x: player.x + player.w,
+                    y: player.y
+                })
+                this.scene.addElement(ps)
+                // 游戏结束
+                setTimeout(() => {
+                    this.scene.gameOver()
+                }, 300)
+            }
+        }
+        
+       
+   }
 
     moveLeft() {
         this.x -= this.speed
@@ -162,17 +252,14 @@ class Scene extends GuaScene {
         // 把元素添加进主场景，在主场景里自动draw所有，
         // 在 GuaGame 里统一 draw ,调用 scene.draw()
         this.elements = []
+        // 背景
         this.addElement(this.bg)
+        // 玩家
         this.addElement(this.player)
-        // 添加云
+        // 云
         this.addClouds()
-        // 添加敌人
+        // 敌人
         this.addEnemies()
-
-        // // add particles
-        // var ps = GuaParticleSystem.new(this.game)
-        // this.addElement(ps)
-
     }
 
     addClouds() {
@@ -215,11 +302,19 @@ class Scene extends GuaScene {
         })
     }
 
+    gameOver() {
+        var end = SceneEnd.new(this.game)
+        this.game.replaceScene(end)
+    }
+
     update() {
         super.update()
 
-         // 删除死掉的敌人
-        //  this.enemies = this.enemies.filter(e => e.life > 0)
+        // 删除击中的敌人 判断游戏是否结束
+        this.enemies = this.enemies.filter(e => !e.killed)
+        if (!this.enemies.length) {
+            this.gameOver()
+        }
     }
 
 }
